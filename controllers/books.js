@@ -62,6 +62,7 @@ exports.rentBook = async (req, res, next) => {
 // @desc      내가 대여한 책 목록 불러오는 API
 // @route     GET/api/v1/book/me?offset=0&limit=25
 // @request   user_id,offset,limit
+// @response success
 
 exports.getMyBooks = async (req, res, next) => {
   let user_id = req.user.id;
@@ -78,6 +79,11 @@ exports.getMyBooks = async (req, res, next) => {
     res.status(500).json({ success: false, message: "DB Error", error: e });
   }
 };
+
+// @desc      책 반납하기 API
+// @route     DELETE/api/v1/book/return
+// @request   user_id,book_id
+// @response success
 
 exports.returnBook = async (req, res, next) => {
   let user_id = req.user.id;
