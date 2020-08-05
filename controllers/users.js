@@ -99,3 +99,20 @@ exports.loginUser = async (req, res, next) => {
     res.status(500).json({ success: false, error: e });
   }
 };
+
+// @desc  로그아웃(현재의 기기 1개에 대한 로그아웃)
+// @route /api/v1/users/logout
+exports.logoutUser = async (req, res, next) => {
+  let user_id = req.user.id;
+  let token = req.user.token;
+
+  let query = "delete from book_user_token where user_id =? and token = ?";
+  let data = [user_id, token];
+
+  try {
+    [result] = await connection.query(query, data);
+    res.status(200).json({ success: true });
+  } catch (e) {
+    res.status(500).json({ success: false, error: e });
+  }
+};
