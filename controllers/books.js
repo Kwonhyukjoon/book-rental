@@ -34,8 +34,8 @@ exports.rentBook = async (req, res, next) => {
 
   try {
     [rows] = await connection.query(query);
-    if (rows.length != 0) {
-      res.status(400).json({ message: "이미 빌린 책입니다." });
+    if (rows.length == 0) {
+      res.status(400).json();
       return;
     }
     res.status(200).json({ success: true });
