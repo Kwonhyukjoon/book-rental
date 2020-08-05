@@ -62,3 +62,40 @@ exports.createUser = async (req, res, next) => {
   await conn.release();
   res.status(200).json({ success: true, token: token });
 };
+
+// @desc 로그인
+// @route POST /api/v1/users/login
+// @request email.passwd
+// @response success token
+exports.loginUser = async (req, res, next) => {
+  let email = req.body.email;
+  let passwd = req.body.passwd;
+
+  let query = "select * from book_user where email = ? ";
+  let data = [email];
+  try {
+    [rows] = await connection.query(query, data);
+    let savedPasswd = rows[0].passwd;
+    let isMatch = await bcrypt.compare(passwd, savedPasswd);
+    if (isMatch == false) {
+      res.status(400).json({ success: true, result: isMatch });
+      return;
+    }
+    let token = jwt.sign(
+      { user_id: rows[0].id },
+      process.env.ACCESS_TOKEN_SECRET
+    );
+
+    query = "insert into book_user_token (token,user_id) values(?,?)";
+    data = [token, rows[0].id];
+
+    try {
+      [result] = await connection.query(query, data);
+      res.status(200).json({ success: true, result: isMatch, token: token });
+    } catch (e) {
+      res.status(500).json({ success: false, error: e });
+    }
+  } catch (e) {
+    res.status(500).json({ success: false, error: e });
+  }
+};
