@@ -15,4 +15,8 @@ app.use("/api/v1/users", users);
 
 const PORT = process.env.PORT || 4500;
 
+app.get("/", (req, res, next) => {
+  res.json({ success: true });
+});
+
 app.listen(PORT, console.log("App listening on port 4500!"));
